@@ -19,7 +19,7 @@ std::pair<int, int> alphabeta(State *state, int step, int isWhite, int maxDepth,
     if (!state->legal_actions.size())
         state->get_legal_actions();
 
-    if (state->game_state == WIN || step == maxDepth) {
+    if (state->game_state != NONE || step == maxDepth) {
         int t = state->evaluate() * (isWhite ? 1 : -1);
         return std::make_pair(t, t);
     }

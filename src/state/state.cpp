@@ -6,7 +6,7 @@
 #include "../config.hpp"
 
 // pawn 1, rook 2, knight 3, bishop 4, queen 5, king 6
-const int chess_weight[7] = {0, 120, 400, 320, 330, 700, 20000};
+const int chess_weight[7] = {0, 120, 400, 320, 330, 900, 20000};
 const int piece_square_table[8][6][5] = {
         {{}},
         {
@@ -73,19 +73,15 @@ const int piece_square_table[8][6][5] = {
  * @return int 
  */
 int State::evaluate(){
-    if (this->game_state == DRAW) {
-        return 0;
-    }
+    int scorefirst = 0, scoresecond = 0, endgame = 0, cnt[2] = {0, 0}, qcnt[2] = {0, 0};
     if (this->game_state == WIN) {
         if (this->player == 0) {
-            return 1000000;
+            scorefirst += 1000000;
         }
         else {
-            return -1000000;
+            scorefirst -= 1000000;
         }
     }
-
-    int scorefirst = 0, scoresecond = 0, endgame = 0, cnt[2] = {0, 0}, qcnt[2] = {0, 0};
 
     for (int i = 0; i < BOARD_H; i++) {
         for (int j = 0; j < BOARD_W; j++) {
@@ -188,7 +184,7 @@ static const int move_table_king[8][2] = {
  * @brief get all legal actions of now state
  * 
  */
-void State::get_legal_actions(){
+inline void State::get_legal_actions(){
   // [Optional]
   // This method is not very efficient
   // You can redesign it
