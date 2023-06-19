@@ -6,21 +6,21 @@
 #include "../config.hpp"
 
 // pawn 1, rook 2, knight 3, bishop 4, queen 5, king 6
-const int chess_weight[7] = {0, 2, 5, 4, 3, 9, 1000};
-const int piece_square_table[7][6][5] = {
+const int chess_weight[7] = {0, 120, 400, 320, 330, 700, 20000};
+const int piece_square_table[8][6][5] = {
         {{}},
         {
-            {0, 0, 0, 0, 0},
+            {100, 100, 100, 100, 100},
             {50, 50, 50, 50, 50},
-            {5, 0, 5, 5, 5},
-            {5, 0, 5, 5, 5},
-            {5, 0, -20, -20, -20},
+            {25, 10, 10, 10, 5},
+            {0, 0,  20, 20, 20},
+            {5, 5, 0, -5, -5},
             {0, 0, 0, 0, 0}
             },
         {
             {0, 0, 0, 0, 0},
-            {5, 5, 5, 10, 10},
-            {-5, 0, 0, 0, 0},
+            {5, 10, 10, 10, 10},
+            {-5, 0, 0, 0, -5},
             {-5, 0, 0, 0, -5},
             {-5, 0, 0, 0, -5},
             {0, 0, 5, 5, 5}
@@ -50,13 +50,21 @@ const int piece_square_table[7][6][5] = {
             {-20, -10, -10, -10, -20}
             },
         {
+            {-30, -40, -50, -40, -30},
+            {-30, -40, -50, -40, -30},
+            {-30, -40, -50, -40, -30},
+            {-20, -30, -40, -30, -20},
+            {20, 20, 0, 20, 20},
+            {20, 30, 0, 30, 20}
+            },
+        {
             {-50, -30, -30, -30, -50},
             {-30, 0, 0, 0, -30},
             {-10, 20, 30, 20, -10},
             {-10, 20, 30, 20, -10},
             {-30, 0, 0, 0, -30},
             {-50, -30, -30, -30, -50}
-        }
+            }
 };
 
 /**
@@ -77,35 +85,50 @@ int State::evaluate(){
         }
     }
 
-    int scorefirst = 0, scoresecond = 0;
+    int scorefirst = 0, scoresecond = 0, endgame = 0, cnt[2] = {0, 0}, qcnt[2] = {0, 0};
 
     for (int i = 0; i < BOARD_H; i++) {
         for (int j = 0; j < BOARD_W; j++) {
             if (this->board.board[0][i][j] != 0) {
                 scorefirst += chess_weight[this->board.board[0][i][j]];
+                if (this->board.board[0][i][j] > 1) cnt[0]++;
+                if (this->board.board[0][i][j] == 5) {
+                    qcnt[0]++;
+                }
             }
             if (this->board.board[1][i][j] != 0) {
                 scorefirst -= chess_weight[this->board.board[1][i][j]];
+                if (this->board.board[1][i][j] > 1) cnt[1]++;
+                if (this->board.board[1][i][j] == 5) {
+                    qcnt[1]++;
+                }
             }
         }
     }
 
-
+    if ((qcnt[0] == 0 || cnt[0] <= 3) && (qcnt[1] == 0 || cnt[1] <= 3)) {
+        endgame = 1;
+    }
 
     for (int i = 0; i < BOARD_H; i++) {
         for (int j = 0; j < BOARD_W; j++) {
             if (this->board.board[0][i][j] != 0) {
-                scoresecond += piece_square_table[this->board.board[0][i][j]][i][j];
+                if (endgame && this->board.board[0][i][j] == 6)
+                    scoresecond += piece_square_table[this->board.board[0][i][j] + 1][i][j];
+                else
+                    scoresecond += piece_square_table[this->board.board[0][i][j]][i][j];
             }
 
             if (this->board.board[1][i][j] != 0) {
-                scoresecond -= piece_square_table[this->board.board[1][i][j]][5-i][4-j];
+                if (endgame && this->board.board[1][i][j] == 6)
+                    scoresecond -= piece_square_table[this->board.board[1][i][j] + 1][5-i][4-j];
+                else
+                    scoresecond -= piece_square_table[this->board.board[1][i][j]][5-i][4-j];
             }
         }
     }
 
-
-    return scorefirst * 1000 + scoresecond;
+    return scorefirst + scoresecond;
 }
 
 
