@@ -5,6 +5,7 @@
 #include "./state.hpp"
 #include "../config.hpp"
 
+const int chess_weight[7] = {0, 1, 5, 5, 3, 9, 1000};
 
 /**
  * @brief evaluate the state
@@ -12,8 +13,24 @@
  * @return int 
  */
 int State::evaluate(){
-  // [TODO] design your own evaluation function
-  return 0;
+    if (this->game_state == WIN) {
+        return 1000;
+    } else if (this->game_state == DRAW) {
+        return 0;
+    }
+
+    int score = 0;
+    for (int i = 0; i < BOARD_H; i++) {
+        for (int j = 0; j < BOARD_W; j++) {
+            if (this->board.board[0][i][j] != 0) {
+                score += chess_weight[this->board.board[0][i][j]];
+            }
+            if (this->board.board[1][i][j] != 0) {
+                score -= chess_weight[this->board.board[1][i][j]];
+            }
+        }
+    }
+    return score;
 }
 
 
