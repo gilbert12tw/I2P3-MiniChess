@@ -11,6 +11,7 @@
 
 
 State* root;
+int moveCount = 0;
 
 /**
  * @brief Read the board from the file
@@ -44,10 +45,11 @@ void read_board(std::ifstream& fin) {
  */
 void write_valid_spot(std::ofstream& fout) {
     // Keep updating the output until getting killed.
+    moveCount++;
     int depth = 5;
     while(true) {
 
-        auto move = Alphabeta::get_move(root, depth++);
+        auto move = Alphabeta::get_move(root, depth++, moveCount);
 
         fout << move.first.first << " " << move.first.second << " "\
          << move.second.first << " " << move.second.second << std::endl;

@@ -6,7 +6,7 @@
 #include "../state/state.hpp"
 #include <utility>
 
-std::pair<int, int>  alphabeta(State *state, int step, int isWhite, int maxDepth, int alpha, int beta);
+std::pair<int, int>  alphabeta(State *state, int step, int isWhite, int maxDepth, int moveCount, int alpha, int beta);
 
 /**
  * @brief Policy class for random policy,
@@ -14,5 +14,5 @@ std::pair<int, int>  alphabeta(State *state, int step, int isWhite, int maxDepth
  */
 class Alphabeta {
 public:
-    static Move get_move(State *state, int depth);
+    static Move get_move(State *state, int depth, int moveCount);
 };
